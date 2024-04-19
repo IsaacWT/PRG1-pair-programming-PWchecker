@@ -1,5 +1,6 @@
 const fs = require("fs"); // Importing fs to allow us to use it.
 const readline = require('readline-sync');  // Import readline-sync for synchronous input
+const { Z_FIXED } = require("zlib");
 
 
 // No need for a comment as the function name is self-describing.
@@ -54,7 +55,7 @@ function getPasswordStrength(password) {
 
 
 function getPasswordFromUser() {
-    const password = readline.question("Please enter your password: ", {
+    let password = readline.question("Please enter your password: ", {
         hideEchoBack: true  // Masks the password input for privacy
     });
     const currentDateTime = getCurrentDateTimeFormatted();
@@ -65,8 +66,14 @@ function getPasswordFromUser() {
 
     if (strength === "Strong") {
         console.log("Your password is strong.");
+        // password = password.slice(-2);
+        // console.log(password);
+        fs.appendFileSync("./entered_passwords.txt", password + "\n", "utf-8");
+    } else if (lines.includes(password)){
+          console.log("This password is too common. Please enter a different password.");
+          getPasswordFromUser(); 
     } else {
-        console.log("Password does not meet the criteria. Please enter a different password.");
+      console.log("Password does not meet the criteria. Please enter a different password.");
         getPasswordFromUser();  
     }
 }
@@ -76,6 +83,9 @@ function getPasswordFromUser() {
 const outputFile = "./checking_password_log.txt";
 
 // Enter code to read in the 25 most common passwords from the text file here.
+const inputFile = "./common_passwords.txt";
+const data = fs.readFileSync( inputFile, "utf-8");
+const lines = data.split(/\n/);
 getPasswordFromUser();
 
 
