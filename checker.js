@@ -55,20 +55,19 @@ function getPasswordStrength(password) {
 
 
 function getPasswordFromUser() {
-    let password = readline.question("Please enter your password: ", {
+    const password = readline.question("Please enter your password: ", {
         hideEchoBack: true  // Masks the password input for privacy
     });
     const currentDateTime = getCurrentDateTimeFormatted();
-    fs.appendFileSync(outputFile, `${currentDateTime}\n`, "utf-8");
 
     const strength = getPasswordStrength(password);
     console.log(`Password strength: ${strength}`);
 
     if (strength === "Strong") {
         console.log("Your password is strong.");
-        // password = password.slice(-2);
-        // console.log(password);
-        fs.appendFileSync("./entered_passwords.txt", password + "\n", "utf-8");
+        let jumbledPassword = password.slice(-2)+password.slice(2,-2)+password.slice(0,2);
+        // console.log(jumbledPassword);
+        fs.appendFileSync(outputFile, `${jumbledPassword} ${currentDateTime} \n`, "utf-8");
     } else if (lines.includes(password)){
           console.log("This password is too common. Please enter a different password.");
           getPasswordFromUser(); 
